@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { config } from './config.js';
+import { config, isOriginAllowed } from './config.js';
 import healthRouter from './routes/health.js';
 import chatRouter from './routes/chat.js';
 import { apiKeyMiddleware } from './middleware/apiKey.js';
@@ -18,9 +18,10 @@ app.use(helmet());
 app.use(
   cors({
     origin(origin, callback) {
-      // Allow requests with no Origin header (same-origin, curl, health checks)
-      if (!origin) return callback(null, true);
-      if (config.ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      // Allow requests with no Origin header (same-origin, curl, health checks) or allowed origins
+      if (!origin || isOriginAllowed(origin)) {
+        return callback(null, true);
+      }
       callback(new Error(`CORS: origin not allowed — ${origin}`));
     },
     credentials: true,

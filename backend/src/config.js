@@ -28,3 +28,24 @@ export const config = Object.freeze({
   ALLOWED_ORIGINS: list('ALLOWED_ORIGINS'),
   API_KEYS: list('API_KEYS'),
 });
+
+export function isOriginAllowed(origin) {
+  if (!origin) return true;
+  // If allowed origins has '*' or is empty, allow all origins
+  if (config.ALLOWED_ORIGINS.includes('*') || config.ALLOWED_ORIGINS.length === 0) {
+    return true;
+  }
+  // Exact match
+  if (config.ALLOWED_ORIGINS.includes(origin)) {
+    return true;
+  }
+  // Support any vercel deployment
+  if (/^https:\/\/.*\.vercel\.app$/.test(origin)) {
+    return true;
+  }
+  // Support localhost
+  if (/^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    return true;
+  }
+  return false;
+}
