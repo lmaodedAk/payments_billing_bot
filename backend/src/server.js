@@ -40,6 +40,16 @@ const chatLimiter = rateLimit({
 });
 
 // ── Routes ────────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'Zia Payment & Billing Assistant Backend',
+    endpoints: {
+      health: '/health',
+      chat: 'POST /api/chat',
+    },
+  });
+});
 app.use('/health', healthRouter);
 app.use('/api/chat', chatLimiter, apiKeyMiddleware, chatRouter);
 
