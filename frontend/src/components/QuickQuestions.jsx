@@ -2,14 +2,14 @@
 import { ChevronRight } from 'lucide-react';
 
 const QUESTIONS = [
+  'I want to register as a new lead in Zoho CRM',
+  'What information is needed to create a lead?',
+  'Schedule a product demo with sales',
+  'Request a custom enterprise quote',
   'What payment methods do you accept?',
   'Why is my payment pending?',
   'How do I request a refund?',
-  'When will my refund arrive?',
   'How do I download my invoice?',
-  'What is the tax rate on my invoice?',
-  'How do I cancel my subscription?',
-  'How is my payment data secured?',
 ];
 
 export default function QuickQuestions({ onSelect }) {
@@ -20,7 +20,7 @@ export default function QuickQuestions({ onSelect }) {
           Frequently asked questions
         </h2>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Select any question below to immediately open the assistant and get an answer.
+          Select any prompt below to immediately open the assistant and start the conversation.
         </p>
       </div>
 

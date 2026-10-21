@@ -1,6 +1,6 @@
 // components/Navbar.jsx
 import { useState, useEffect } from 'react';
-import { CreditCard, Sun, Moon, MessageSquare } from 'lucide-react';
+import { Layers, Sun, Moon, MessageSquare } from 'lucide-react';
 
 export default function Navbar({ isDark, onToggleDark, onOpenChat }) {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -26,31 +26,33 @@ export default function Navbar({ isDark, onToggleDark, onOpenChat }) {
         <a
           href="#"
           className="flex items-center gap-2.5 font-bold text-neutral-900 dark:text-neutral-50 text-base tracking-tight"
-          aria-label="Payment & Billing home"
+          aria-label="Billing & CRM Assistant home"
         >
-          <CreditCard size={20} strokeWidth={2} className="text-primary-600 dark:text-primary-400" aria-hidden="true" />
-          <span>Payment &amp; Billing</span>
+          <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/70 text-primary-600 dark:text-primary-400">
+            <Layers size={18} strokeWidth={2} aria-hidden="true" />
+          </div>
+          <span>Billing &amp; CRM Assistant</span>
         </a>
 
         {/* Center: Navigation links */}
         <nav className="hidden md:flex items-center gap-7" aria-label="Main navigation">
           <a
-            href="#"
-            className="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
-          >
-            Home
-          </a>
-          <a
             href="#topics"
             className="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
           >
-            Support
+            Billing Support
+          </a>
+          <a
+            href="#lead-capture"
+            className="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
+          >
+            CRM Leads
           </a>
           <a
             href="#questions"
             className="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors"
           >
-            Contact
+            Common Questions
           </a>
         </nav>
 

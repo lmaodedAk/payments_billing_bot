@@ -5,10 +5,10 @@ import remarkGfm from 'remark-gfm';
 import { X, RotateCcw, MessageSquare } from 'lucide-react';
 
 const STARTER_CHIPS = [
+  'I want to register as a new lead in Zoho CRM',
   'What payment methods do you accept?',
-  'Why is my payment pending?',
+  'Schedule a product sales demo',
   'How do I request a refund?',
-  'How do I download my invoice?',
 ];
 
 function TypingIndicator() {
@@ -127,7 +127,7 @@ export default function ChatWidget({
   return (
     <div
       role="dialog"
-      aria-label="Payment assistant chat"
+      aria-label="Billing & CRM Assistant chat"
       aria-modal="true"
       className="fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[410px] sm:h-[590px] z-50 flex flex-col bg-white dark:bg-neutral-900 sm:rounded-2xl sm:border sm:border-neutral-200 dark:sm:border-neutral-800 shadow-panel overflow-hidden"
     >
@@ -139,9 +139,9 @@ export default function ChatWidget({
           </div>
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              Payment Assistant
+              Billing &amp; CRM Assistant
             </h2>
-            {/* Green dot as replacement to active now */}
+            {/* Green dot as indicator */}
             <span
               className="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"
               title="Active"
@@ -179,12 +179,12 @@ export default function ChatWidget({
         {messages.length === 0 && (
           <div className="my-auto flex flex-col gap-4 text-left">
             <div className="p-3.5 bg-white dark:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700/80 rounded-xl text-sm text-neutral-900 dark:text-neutral-100 shadow-xs">
-              <p>👋 Hello! I am your AI payment assistant. How can I help you today?</p>
+              <p>👋 Hello! I can assist you with Payment &amp; Billing inquiries, or help you register as a new lead in Zoho CRM.</p>
             </div>
 
             <div>
               <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 uppercase tracking-wider">
-                Common questions
+                Common questions &amp; actions
               </p>
               <div className="flex flex-col gap-2">
                 {STARTER_CHIPS.map((chip) => (
@@ -227,7 +227,7 @@ export default function ChatWidget({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleInputKeyDown}
-          placeholder="Ask a question..."
+          placeholder="Ask a billing question or register as a lead..."
           rows={1}
           aria-label="Type your message"
           disabled={isTyping}
