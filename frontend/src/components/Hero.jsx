@@ -1,0 +1,54 @@
+// components/Hero.jsx
+import { MessageSquare } from 'lucide-react';
+
+export default function Hero({ onOpenChat }) {
+  function handleScrollToQuestions() {
+    const el = document.getElementById('questions');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  return (
+    <section className="pt-16 pb-16 sm:pt-20 sm:pb-20 px-4 sm:px-6 text-center max-w-4xl mx-auto">
+      {/* Pill Badge */}
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-800/80 mb-6 shadow-xs">
+        <span className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse" aria-hidden="true" />
+        <span>AI Support Assistant</span>
+      </div>
+
+      {/* Main Title */}
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-5 leading-tight">
+        Payment &amp; Billing <br />
+        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+          Assistant
+        </span>
+      </h1>
+
+      {/* Description */}
+      <p className="text-base sm:text-lg text-neutral-600 dark:text-neutral-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+        Get instant answers to your payment and billing questions. Our AI assistant can help you with payment methods, invoices, refunds, subscriptions, billing disputes, taxes and fees, and more.
+      </p>
+
+      {/* Action Buttons */}
+      <div className="flex flex-wrap items-center justify-center gap-3.5">
+        <button
+          type="button"
+          onClick={onOpenChat}
+          className="btn-primary"
+        >
+          <MessageSquare size={16} strokeWidth={2} aria-hidden="true" />
+          <span>Chat with Assistant</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleScrollToQuestions}
+          className="btn-secondary"
+        >
+          Browse Questions
+        </button>
+      </div>
+    </section>
+  );
+}
