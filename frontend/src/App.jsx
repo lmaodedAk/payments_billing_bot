@@ -4,6 +4,7 @@ import { MessageSquare } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import TopicCards from './components/TopicCards';
+import LeadForm from './components/LeadForm';
 import QuickQuestions from './components/QuickQuestions';
 import ChatWidget from './components/ChatWidget';
 import Footer from './components/Footer';
@@ -61,6 +62,7 @@ export default function App() {
       <main className="flex-1">
         <Hero onOpenChat={() => handleOpenChat()} />
         <TopicCards onSelectTopic={handleOpenChat} />
+        <LeadForm onSubmitLead={handleOpenChat} />
         <QuickQuestions onSelect={handleOpenChat} />
       </main>
 
