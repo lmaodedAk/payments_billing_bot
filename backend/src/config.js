@@ -28,6 +28,7 @@ export const config = Object.freeze({
   ZIA_AGENT_URL: required('ZIA_AGENT_URL'),
   ALLOWED_ORIGINS: list('ALLOWED_ORIGINS'),
   API_KEYS: list('API_KEYS'),
+  ZOHO_WIDGET_SECRET: process.env.ZOHO_WIDGET_SECRET || '',
 });
 
 export function isOriginAllowed(origin) {

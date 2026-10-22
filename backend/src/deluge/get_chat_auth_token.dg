@@ -1,0 +1,51 @@
+/*
+  Zoho CRM Deluge Standalone Function: get_chat_auth_token
+  Purpose: Generates a cryptographically signed HMAC-SHA256 assertion token
+           for the authenticated CRM user.
+  
+  Security Guarantees:
+    1. Runs server-side on Zoho CRM infrastructure.
+    2. Captures zoho.loginuserid and zoho.loginuser from the authenticated CRM session.
+    3. Signs with widget_hmac_secret stored in CRM Org Variables.
+    4. Zero secret exposure to browser client code.
+    5. Unique SHA-256 nonce + timestamp provides atomic replay protection.
+
+  Installation:
+    1. Zoho CRM -> Setup -> Developer Space -> Functions -> New Function.
+    2. Name: get_chat_auth_token (Display Name: Get Chat Auth Token).
+    3. Type: Standalone.
+    4. Set CRM Variable 'widget_hmac_secret' in Setup -> Developer Space -> CRM Variables.
+*/
+
+userId = zoho.loginuserid.toString();
+email = zoho.loginuser;
+timestamp = zoho.currenttime.toLong();
+nonce = zoho.encryption.sha256(userId + timestamp.toString() + zoho.currenttime.toString());
+
+// Retrieve HMAC secret from CRM Variables (Setup > Developer Space > CRM Variables)
+secretKey = zoho.crm.getOrgVariable("widget_hmac_secret");
+
+if (secretKey == null || secretKey == "")
+{
+    errMap = Map();
+    errMap.put("error", "CRM variable widget_hmac_secret is not configured");
+    return errMap;
+}
+
+// Construct canonical JSON payload
+payloadJson = "{\"userId\":\"" + userId + "\",\"email\":\"" + email + "\",\"timestamp\":" + timestamp + ",\"nonce\":\"" + nonce + "\"}";
+
+// Base64 encode the payload
+payloadB64 = zoho.encryption.base64Encode(payloadJson);
+
+// Compute HMAC-SHA256 signature in hexadecimal format
+signature = zoho.encryption.hmacsha256(secretKey, payloadB64, "hex");
+
+// Canonical token format: <base64Payload>.<signatureHex>
+token = payloadB64 + "." + signature;
+
+result = Map();
+result.put("token", token);
+result.put("userId", userId);
+result.put("email", email);
+return result;

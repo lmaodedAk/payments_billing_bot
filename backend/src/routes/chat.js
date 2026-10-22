@@ -27,6 +27,10 @@ router.post('/', async (req, res, next) => {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+
     // Use the provided session ID or create a fresh one
     const activeSessionId =
       typeof sessionId === 'string' && sessionId.trim()
@@ -36,6 +40,7 @@ router.post('/', async (req, res, next) => {
     const { reply, sessionId: returnedSessionId } = await askAgent({
       message: trimmed,
       sessionId: activeSessionId,
+      userId: req.user.id,
     });
 
     return res.json({ reply, sessionId: returnedSessionId });

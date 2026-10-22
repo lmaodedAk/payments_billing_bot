@@ -2,13 +2,12 @@
 // Calls the Zoho Zia Agents /query endpoint and returns the agent's reply.
 import { config } from '../config.js';
 import { getAccessToken, invalidateToken } from './zohoToken.js';
+import { sessionStore } from './sessionStore.js';
 
 const ZIA_QUERY_URL = config.ZIA_AGENT_URL;
 
-// In-process conversation history keyed by sessionId.
 // Stores the last N message pairs for context injection.
 const MAX_HISTORY = 4; // pairs (user + agent)
-const history = new Map(); // sessionId → [{ role, text }, ...]
 
 /**
  * Extract the agent's reply text from the response JSON.
@@ -31,14 +30,15 @@ export function extractReply(responseJson) {
 
 /**
  * Build the query string to send to Zia.
- * When a conversation history exists we prepend the last MAX_HISTORY pairs
- * so the stateless /query endpoint has context.
+ * When a conversation history exists for this user and session, we prepend the
+ * last MAX_HISTORY pairs so the stateless /query endpoint has context.
  * @param {string} message  The current user message.
+ * @param {string} userId   Verified Zoho user ID.
  * @param {string} sessionId
  * @returns {string}
  */
-function buildQuery(message, sessionId) {
-  const prior = history.get(sessionId);
+function buildQuery(message, userId, sessionId) {
+  const prior = sessionStore.getHistory(userId, sessionId);
   if (!prior || prior.length === 0) return message;
 
   const ctx = prior
@@ -81,12 +81,16 @@ async function callAgent(query, token) {
 
 /**
  * Ask the Zia agent a question and return its reply plus the session ID.
- * Maintains an in-process conversation history for context across turns.
- * @param {{ message: string, sessionId: string }} opts
+ * Maintains an isolated conversation history scoped to the authenticated userId.
+ * @param {{ message: string, sessionId: string, userId: string }} opts
  * @returns {Promise<{ reply: string, sessionId: string }>}
  */
-export async function askAgent({ message, sessionId }) {
-  const query = buildQuery(message, sessionId);
+export async function askAgent({ message, sessionId, userId }) {
+  if (!userId || typeof userId !== 'string') {
+    throw new Error('[ziaAgent] askAgent requires an authenticated userId.');
+  }
+
+  const query = buildQuery(message, userId, sessionId);
 
   let token = await getAccessToken();
   let res = await callAgent(query, token);
@@ -113,13 +117,8 @@ export async function askAgent({ message, sessionId }) {
 
   const reply = extractReply(responseJson);
 
-  // Update conversation history for this session
-  const prior = history.get(sessionId) ?? [];
-  prior.push({ role: 'user', text: message });
-  prior.push({ role: 'agent', text: reply });
-  // Keep only the last MAX_HISTORY pairs (2 entries per pair)
-  if (prior.length > MAX_HISTORY * 2) prior.splice(0, prior.length - MAX_HISTORY * 2);
-  history.set(sessionId, prior);
+  // Update isolated conversation history for this user's session
+  sessionStore.appendTurn(userId, sessionId, message, reply, MAX_HISTORY);
 
   return { reply, sessionId };
 }

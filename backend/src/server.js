@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import { config, isOriginAllowed } from './config.js';
 import healthRouter from './routes/health.js';
 import chatRouter from './routes/chat.js';
-import { apiKeyMiddleware } from './middleware/apiKey.js';
+import { authMiddleware } from './middleware/auth.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -52,7 +52,7 @@ app.get('/', (req, res) => {
   });
 });
 app.use('/health', healthRouter);
-app.use('/api/chat', chatLimiter, apiKeyMiddleware, chatRouter);
+app.use('/api/chat', chatLimiter, authMiddleware, chatRouter);
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use(errorHandler);
