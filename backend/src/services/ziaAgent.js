@@ -3,7 +3,7 @@
 import { config } from '../config.js';
 import { getAccessToken, invalidateToken } from './zohoToken.js';
 
-const ZIA_QUERY_URL = 'https://ziaagents.zoho.com/ziaagents/api/v1/agents/query';
+const ZIA_QUERY_URL = config.ZIA_AGENT_URL;
 
 // In-process conversation history keyed by sessionId.
 // Stores the last N message pairs for context injection.

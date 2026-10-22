@@ -25,6 +25,7 @@ export const config = Object.freeze({
   ZIA_ORG_ID: required('ZIA_ORG_ID'),
   ZIA_AGENT_ID: required('ZIA_AGENT_ID'),
   ZIA_VERSION_ID: required('ZIA_VERSION_ID'),
+  ZIA_AGENT_URL: required('ZIA_AGENT_URL'),
   ALLOWED_ORIGINS: list('ALLOWED_ORIGINS'),
   API_KEYS: list('API_KEYS'),
 });
