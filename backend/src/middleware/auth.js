@@ -115,10 +115,15 @@ export async function authMiddleware(req, res, next) {
     });
   }
 
-  // Signature verification
-  const secret = config.ZOHO_WIDGET_SECRET || process.env.ZOHO_WIDGET_SECRET;
+  // Signature verification — secret is validated at startup by config.js.
+  // In production, a missing secret causes config.js to throw before the server starts.
+  // We read from process.env at request time so tests can set it in beforeAll()
+  // without needing to bust Jest's module cache.
+  const secret = process.env.ZOHO_WIDGET_SECRET || config.ZOHO_WIDGET_SECRET;
   if (!secret) {
-    console.error('[authMiddleware] Server misconfiguration: ZOHO_WIDGET_SECRET is not configured.');
+    // This branch can only be reached in a test that has not set the env var.
+    // In production, config.js already throws at startup.
+    console.error('[authMiddleware] ZOHO_WIDGET_SECRET not set — authentication cannot proceed.');
     return res.status(500).json({
       error: 'Authentication service unavailable.',
     });

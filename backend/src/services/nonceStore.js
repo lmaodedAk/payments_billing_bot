@@ -12,6 +12,18 @@ class NonceStore {
     if (process.env.NODE_ENV !== 'test') {
       this.timer = setInterval(() => this.cleanup(), this.sweepIntervalMs);
       if (this.timer.unref) this.timer.unref();
+
+      // Warn at startup if distributed replay protection is unavailable.
+      // Without KV, a replayed token can succeed on a different Vercel instance.
+      if (!this.kvUrl || !this.kvToken) {
+        console.warn(
+          '[nonceStore] WARNING: KV_REST_API_URL / KV_REST_API_TOKEN are not set. ' +
+          'Nonce replay protection is IN-MEMORY ONLY and will NOT prevent replays ' +
+          'across separate serverless instances. ' +
+          'Set KV_REST_API_URL + KV_REST_API_TOKEN (Vercel KV or Upstash Redis) ' +
+          'before deploying to production.'
+        );
+      }
     }
   }
 
