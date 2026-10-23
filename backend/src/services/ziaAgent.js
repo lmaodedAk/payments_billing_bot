@@ -39,16 +39,25 @@ export function extractReply(responseJson) {
  */
 function buildQuery(message, userId, sessionId) {
   const prior = sessionStore.getHistory(userId, sessionId);
-  if (!prior || prior.length === 0) return message;
+
+  if (!prior || prior.length === 0) {
+    return message;
+  }
 
   const ctx = prior
     .map(({ role, text }) => `${role === 'user' ? 'User' : 'Agent'}: ${text}`)
     .join('\n');
+
   return `${ctx}\nUser: ${message}`;
 }
 
+const CRM_KEYWORD_PATTERN = /\b(leads?|contacts?|deals?|records?|crm)\b|\b\d{15,22}\b/i;
+
 /**
  * Make one HTTP call to the Zia /query endpoint.
+ * Note: systemArgs is strictly empty. User identity (user_email / user_id) MUST NEVER
+ * be passed as authorization or authoritative metadata since the Zia agent runs with
+ * the shared administrative OAuth token.
  * @param {string} query   Full query string (may include context prefix).
  * @param {string} token   OAuth access token.
  * @returns {Promise<Response>}
@@ -82,10 +91,17 @@ async function callAgent(query, token) {
 /**
  * Ask the Zia agent a question and return its reply plus the session ID.
  * Maintains an isolated conversation history scoped to the authenticated userId.
+ * CRM-related queries are strictly refused unless config.ZIA_CRM_TOOLS_ENABLED is true.
  * @param {{ message: string, sessionId: string, userId: string }} opts
  * @returns {Promise<{ reply: string, sessionId: string }>}
  */
 export async function askAgent({ message, sessionId, userId }) {
+  if (!config.ZIA_CRM_TOOLS_ENABLED && CRM_KEYWORD_PATTERN.test(message)) {
+    throw new Error(
+      '[ziaAgent] Execution blocked: CRM requests are disabled on Zia Agent (ZIA_CRM_TOOLS_ENABLED is false).'
+    );
+  }
+
   if (!userId || typeof userId !== 'string') {
     throw new Error('[ziaAgent] askAgent requires an authenticated userId.');
   }

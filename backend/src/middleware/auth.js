@@ -100,13 +100,15 @@ export async function authMiddleware(req, res, next) {
     });
   }
 
-  // Timestamp validation
-  const tokenTime = parseInt(timestamp, 10);
-  if (isNaN(tokenTime)) {
+  // Timestamp validation — supports milliseconds (13 digits) and seconds (10 digits)
+  const rawTime = parseInt(timestamp, 10);
+  if (isNaN(rawTime)) {
     return res.status(401).json({
       error: 'Invalid token timestamp.',
     });
   }
+
+  const tokenTime = rawTime < 1e11 ? rawTime * 1000 : rawTime;
 
   const now = Date.now();
   if (Math.abs(now - tokenTime) > TOKEN_VALIDITY_WINDOW_MS) {

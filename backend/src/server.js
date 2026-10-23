@@ -31,10 +31,10 @@ app.use(
 // ── Body parsing (10 KB limit) ────────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 
-// ── Rate limit on /api/chat: 20 req / min / IP ────────────────────────────────
+// ── Rate limit on /api/chat: 20 req / min / IP (higher in test mode) ──────────
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 20,
+  max: process.env.NODE_ENV === 'test' ? 1000 : 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many requests. Please slow down and try again.' },

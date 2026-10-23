@@ -51,6 +51,7 @@ export const config = Object.freeze({
   ZIA_AGENT_URL: required('ZIA_AGENT_URL'),
   ALLOWED_ORIGINS: list('ALLOWED_ORIGINS'),
   API_KEYS: list('API_KEYS'),
+  ZIA_CRM_TOOLS_ENABLED: process.env.ZIA_CRM_TOOLS_ENABLED === 'true',
   // Required in production. Must be the same secret stored in the Zoho CRM
   // Org Variable 'widget_hmac_secret' used by the Deluge function.
   ZOHO_WIDGET_SECRET: requiredInProduction('ZOHO_WIDGET_SECRET'),
